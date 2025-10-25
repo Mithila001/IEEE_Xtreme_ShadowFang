@@ -19,100 +19,88 @@ def get_number():
     except ValueError:
         return float(data)
 
-def find_first(A, X):
-    N = len(A)
-    # The result index (0-indexed)
-    index = -1
-    low = 0
-    high = N - 1
+def find_first(sorted_arr, target_val):
+    """Finds the 0-indexed position of the first occurrence of target_val."""
+    arr_len = len(sorted_arr)
+    result_idx = -1
+    start_ptr = 0
+    end_ptr = arr_len - 1
 
-    while low <= high:
-        mid = low + (high - low) // 2
+    while start_ptr <= end_ptr:
+        mid_idx = start_ptr + (end_ptr - start_ptr) // 2
         
-        if A[mid] == X:
-            # Match found, store the index and look in the left half 
-            # for an even earlier occurrence.
-            index = mid
-            high = mid - 1
-        elif A[mid] < X:
-            # X is in the right half
-            low = mid + 1
-        else: # A[mid] > X
-            # X is in the left half
-            high = mid - 1
+        if sorted_arr[mid_idx] == target_val:
+            result_idx = mid_idx
+            end_ptr = mid_idx - 1  # Look left for an earlier occurrence
+        elif sorted_arr[mid_idx] < target_val:
+            start_ptr = mid_idx + 1
+        else:
+            end_ptr = mid_idx - 1
             
-    return index
+    return result_idx
 
-def find_last(A, X):
+def find_last(sorted_arr, target_val):
+    """Finds the 0-indexed position of the last occurrence of target_val."""
+    arr_len = len(sorted_arr)
+    result_idx = -1
+    start_ptr = 0
+    end_ptr = arr_len - 1
 
-    N = len(A)
-    # The result index (0-indexed)
-    index = -1
-    low = 0
-    high = N - 1
-
-    while low <= high:
-        mid = low + (high - low) // 2
+    while start_ptr <= end_ptr:
+        mid_idx = start_ptr + (end_ptr - start_ptr) // 2
         
-        if A[mid] == X:
-            # Match found, store the index and look in the right half 
-            # for an even later occurrence.
-            index = mid
-            low = mid + 1
-        elif A[mid] < X:
-            # X is in the right half
-            low = mid + 1
-        else: # A[mid] > X
-            # X is in the left half
-            high = mid - 1
+        if sorted_arr[mid_idx] == target_val:
+            result_idx = mid_idx
+            start_ptr = mid_idx + 1  # Look right for a later occurrence
+        elif sorted_arr[mid_idx] < target_val:
+            start_ptr = mid_idx + 1
+        else:
+            end_ptr = mid_idx - 1
             
-    return index
+    return result_idx
 
 def main():
-    # 1. Read N (number of elements) and Q (number of queries)
-    N = get_number()
-    Q = get_number()
+    """Reads input, processes queries, and prints output."""
+    import sys
     
-    if N is None or Q is None:
-        # Handle case of empty input
+    # 1. Read size_N and num_Q
+    size_N = get_number()
+    num_Q = get_number()
+    
+    if size_N is None or num_Q is None:
         return
 
-    # 2. Read the sorted array A
-    A = []
-    for _ in range(N):
-        num = get_number()
-        if num is not None:
-            A.append(num)
-        
+    # 2. Read the sorted array 'data_array'
+    data_array = []
+    for _ in range(size_N):
+        val = get_number()
+        if val is not None:
+            data_array.append(val)
 
-    # 3. Process Q queries
-    import sys
-    output = []
+    # 3. Process num_Q queries
+    res_output = []
     
-    for _ in range(Q):
-        X = get_number()
+    for _ in range(num_Q):
+        query_X = get_number()
         
-        if X is None:
-            break # Stop if no more query numbers
+        if query_X is None:
+            break
 
-        # Find the 0-indexed position of the first occurrence
-        first_idx = find_first(A, X)
+        first_occurrence_idx = find_first(data_array, query_X)
 
-        if first_idx != -1:
-            # X is found, so proceed to find the last occurrence
-            last_idx = find_last(A, X)
+        if first_occurrence_idx != -1:
+            last_occurrence_idx = find_last(data_array, query_X)
             
-            # Convert 0-indexed positions to 1-indexed for output
-            first_pos = first_idx + 1
-            last_pos = last_idx + 1
+            # Convert 0-indexed to 1-indexed
+            first_1_based_pos = first_occurrence_idx + 1
+            last_1_based_pos = last_occurrence_idx + 1
             
-            output.append(f"{first_pos} {last_pos}")
+            res_output.append(f"{first_1_based_pos} {last_1_based_pos}")
         else:
-            # X is not found
-            output.append("-1 -1")
+            res_output.append("-1 -1")
 
-    
-    sys.stdout.write('\n'.join(output) + '\n')
+    # Write all results separated by newlines
+    sys.stdout.write('\n'.join(res_output) + '\n')
 
 
 if __name__ == "__main__":
