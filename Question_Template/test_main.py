@@ -1,6 +1,6 @@
 from io import StringIO
 import sys
-from Question1.main import main
+from main import main
 
 def run_test_case(input_data: str, expected_output: str):
     orig_stdin = sys.stdin
